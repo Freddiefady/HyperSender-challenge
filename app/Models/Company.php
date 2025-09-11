@@ -6,7 +6,9 @@ namespace App\Models;
 
 use App\Enums\TripStatusEnum;
 use Database\Factories\CompanyFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -66,5 +68,11 @@ final class Company extends Model
     public function getTotalTripsCountAttribute(): int
     {
         return $this->trips()->count();
+    }
+
+    #[Scope]
+    protected function active(Builder $query)
+    {
+        return $query->where('is_active', true);
     }
 }
