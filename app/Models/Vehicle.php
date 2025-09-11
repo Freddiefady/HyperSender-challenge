@@ -8,7 +8,9 @@ use App\Enums\TripStatusEnum;
 use App\Enums\VehicleTypeEnum;
 use Carbon\Carbon;
 use Database\Factories\VehicleFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -110,5 +112,11 @@ final class Vehicle extends Model
     public function getCompletedTripsAttribute(): int
     {
         return $this->trips()->where('status', TripStatusEnum::COMPLETED->value)->count();
+    }
+
+    #[Scope]
+    protected function active(Builder $query)
+    {
+        return $query->where('is_active', true);
     }
 }
