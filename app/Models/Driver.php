@@ -6,7 +6,9 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Database\Factories\DriverFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -99,5 +101,11 @@ final class Driver extends Model
     public function getIsLicenseExpiringSoonAttribute(): bool
     {
         return $this->license_expiry <= Carbon::now()->addDays(30);
+    }
+
+    #[Scope]
+    protected function active(Builder $query)
+    {
+        return $query->where('is_active', true);
     }
 }
