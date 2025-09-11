@@ -6,6 +6,7 @@ namespace App\Filament\Resources\Vehicles\Schemas;
 
 use App\Enums\VehicleTypeEnum;
 use App\Models\Company;
+use App\Models\Driver;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -24,6 +25,11 @@ final class VehicleForm
                         Select::make('company_id')
                             ->label('Company')
                             ->options(Company::pluck('name', 'id'))
+                            ->required()
+                            ->searchable(),
+                        Select::make('driver_id')
+                            ->label('Driver')
+                            ->options(Driver::pluck('name', 'id'))
                             ->required()
                             ->searchable(),
                         TextInput::make('brand')

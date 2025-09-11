@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\VehicleTypeEnum;
 use App\Models\Company;
 use App\Models\Driver;
 use App\Models\Vehicle;
@@ -45,6 +46,7 @@ final class VehicleFactory extends Factory
 
         return [
             'company_id' => Company::factory(),
+            'driver_id' => Driver::factory(),
             'brand' => $make,
             'model' => $model,
             'color' => $this->faker->colorName(),
@@ -68,7 +70,6 @@ final class VehicleFactory extends Factory
     public function forDriver(Driver $driver): static
     {
         return $this->state(fn (array $attributes) => [
-            'company_id' => $driver->company_id,
             'driver_id' => $driver->id,
         ]);
     }
@@ -76,7 +77,7 @@ final class VehicleFactory extends Factory
     public function truck(): static
     {
         return $this->state(fn (array $attributes) => [
-            'vehicle_type' => 'truck',
+            'vehicle_type' => VehicleTypeEnum::TRUCK->value,
             'brand' => $this->faker->randomElement($this->makes['truck']),
             'model' => $this->faker->randomElement($this->models['truck']),
             'capacity_kg' => $this->faker->numberBetween(15000, 40000),
@@ -87,7 +88,7 @@ final class VehicleFactory extends Factory
     public function van(): static
     {
         return $this->state(fn (array $attributes) => [
-            'vehicle_type' => 'van',
+            'vehicle_type' => VehicleTypeEnum::VAN->value,
             'brand' => $this->faker->randomElement($this->makes['van']),
             'model' => $this->faker->randomElement($this->models['van']),
             'capacity_kg' => $this->faker->numberBetween(1000, 3500),
@@ -98,7 +99,7 @@ final class VehicleFactory extends Factory
     public function car(): static
     {
         return $this->state(fn (array $attributes) => [
-            'vehicle_type' => 'car',
+            'vehicle_type' => VehicleTypeEnum::CAR->value,
             'brand' => $this->faker->randomElement($this->makes['car']),
             'model' => $this->faker->randomElement($this->models['car']),
             'capacity_kg' => $this->faker->numberBetween(500, 1000),
@@ -109,7 +110,7 @@ final class VehicleFactory extends Factory
     public function motorcycle(): static
     {
         return $this->state(fn (array $attributes) => [
-            'vehicle_type' => 'motorcycle',
+            'vehicle_type' => VehicleTypeEnum::MOTORCYCLE->value,
             'brand' => $this->faker->randomElement($this->makes['motorcycle']),
             'model' => $this->faker->randomElement($this->models['motorcycle']),
             'capacity_kg' => $this->faker->numberBetween(100, 200),

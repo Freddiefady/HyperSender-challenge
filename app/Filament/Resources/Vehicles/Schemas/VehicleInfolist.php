@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Vehicles\Schemas;
 
-use App\Enums\TripStatusEnum;
 use App\Models\Vehicle;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -21,6 +20,8 @@ final class VehicleInfolist
                     ->schema([
                         TextEntry::make('company.name')
                             ->label('Company'),
+                        TextEntry::make('drivers.name')
+                            ->label('Driver'),
                         TextEntry::make('brand'),
                         TextEntry::make('model'),
                         TextEntry::make('year'),
@@ -64,9 +65,7 @@ final class VehicleInfolist
                             ->getStateUsing(fn (Vehicle $record): int => $record->completed_trips)
                             ->label('Completed Trips'),
                         TextEntry::make('active_trips')
-                            ->getStateUsing(fn (Vehicle $record): int => $record->trips()
-                                ->whereIn('status',
-                                    [TripStatusEnum::SCHEDULED->value, TripStatusEnum::IN_PROGRESS->value])->count())
+                            ->getStateUsing(fn (Vehicle $record): int => $record->trips()->active()->count())
                             ->label('Active Trips'),
                         TextEntry::make('drivers_count')
                             ->getStateUsing(fn (Vehicle $record): int => $record->drivers()->count())

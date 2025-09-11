@@ -125,6 +125,14 @@ final class KPIsWidget extends BaseWidget
                 ->description($expiredLicenses > 0 ? 'Expired licenses' : 'All licenses valid')
                 ->descriptionIcon($expiredLicenses > 0 ? 'heroicon-m-exclamation-triangle' : 'heroicon-m-shield-check')
                 ->color($expiredLicenses > 0 ? 'danger' : 'success'),
+            // System Health
+            Stat::make('System Status', 'Optimal')
+                ->description("{$totalCompanies} companies, {$totalDrivers} drivers, {$totalVehicles} vehicles")
+                ->descriptionIcon('heroicon-m-server')
+                ->color('success')
+                ->extraAttributes([
+                    'class' => 'modern-stat-card system-card',
+                ]),
         ];
     }
 

@@ -25,7 +25,7 @@ final class CompanyResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::BuildingOffice;
 
-    protected static ?string $recordTitleAttribute = 'Companies';
+    protected static ?string $recordTitleAttribute = 'name';
 
     protected static string|UnitEnum|null $navigationGroup = 'Management';
 

@@ -24,6 +24,7 @@ final class Vehicle extends Model
 
     protected $fillable = [
         'company_id',
+        'driver_id',
         'brand',
         'model',
         'year',
@@ -85,10 +86,8 @@ final class Vehicle extends Model
     {
         $query = $this->trips()
             ->where(function ($query) use ($start, $end) {
-                //                $q->where(function ($query) use ($start, $end) {
                 $query->where('scheduled_start', '<', $end)
                     ->where('scheduled_end', '>', $start);
-                //                });
             })
             ->whereNotIn('status', [TripStatusEnum::COMPLETED, TripStatusEnum::CANCELLED]);
 
