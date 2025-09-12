@@ -23,7 +23,7 @@ final class VehiclesTable
             ->columns([
                 TextColumn::make('display_name')
                     ->label('Vehicle')
-                    ->searchable(['make', 'model', 'license_plate'])
+                    ->searchable(['brand', 'model', 'license_plate'])
                     ->sortable(),
                 TextColumn::make('company.name')
                     ->searchable()
