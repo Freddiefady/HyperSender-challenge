@@ -50,7 +50,7 @@ final class TripForm
                                 }
 
                                 return Driver::where('company_id', $companyId)
-                                    ->where('is_active', true)
+                                    ->active()
                                     ->pluck('name', 'id');
                             })
                             ->required()
@@ -65,13 +65,22 @@ final class TripForm
                                 }
 
                                 return Vehicle::where('company_id', $companyId)
-                                    ->where('is_active', true)
+                                    ->active()
+                                    ->withCount('drivers')
                                     ->get()
-                                    ->pluck('display_name', 'id');
+                                    ->mapWithKeys(function ($vehicle) {
+                                        $driverCount = $vehicle->drivers_count;
+                                        $label = $driverCount > 0
+                                            ? "{$vehicle->display_name} ({$driverCount} drivers)"
+                                            : "{$vehicle->display_name} (Unused)";
+
+                                        return [$vehicle->id => $label];
+                                    });
                             })
                             ->required()
                             ->searchable()
-                            ->live(),
+                            ->live()
+                            ->helperText('Vehicles can be operated by multiple drivers'),
                     ])
                     ->columns(2),
 

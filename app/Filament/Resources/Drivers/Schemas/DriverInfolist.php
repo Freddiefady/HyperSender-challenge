@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Drivers\Schemas;
 
+use App\Enums\TripStatusEnum;
 use App\Models\Driver;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -60,6 +61,56 @@ final class DriverInfolist
                             ->label('Vehicles Operated'),
                     ])
                     ->columns(2),
+
+                Section::make('Vehicle History')
+                    ->schema([
+                        TextEntry::make('vehicles_operated')
+                            ->getStateUsing(function (Driver $record): string {
+                                $vehicles = $record->vehicles()
+                                    ->withPivot(['scheduled_start'])
+                                    ->orderByPivot('scheduled_start', 'desc')
+                                    ->get();
+
+                                if ($vehicles->isEmpty()) {
+                                    return 'No vehicles operated yet';
+                                }
+
+                                return $vehicles->map(function ($vehicle) use ($record) {
+                                    $lastTrip = $record->trips()
+                                        ->where('vehicle_id', $vehicle->id)
+                                        ->latest('scheduled_start')
+                                        ->first();
+
+                                    $lastUsed = $lastTrip ? $lastTrip->scheduled_start->format('M j, Y') : 'Unknown';
+
+                                    return "{$vehicle->display_name} (Last used: {$lastUsed})";
+                                })->join('<br>');
+                            })
+                            ->html()
+                            ->columnSpanFull(),
+                        TextEntry::make('current_assignment')
+                            ->getStateUsing(function (Driver $record): string {
+                                $activeTrip = $record->trips()
+                                    ->whereIn(
+                                        'status', [TripStatusEnum::SCHEDULED->value, TripStatusEnum::IN_PROGRESS->value]
+                                    )
+                                    ->with('vehicle')
+                                    ->latest('scheduled_start')
+                                    ->first();
+
+                                if (! $activeTrip) {
+                                    return 'No active assignment';
+                                }
+
+                                $status = $activeTrip->status === TripStatusEnum::IN_PROGRESS->value
+                                    ? 'Currently driving'
+                                    : TripStatusEnum::SCHEDULED->value;
+
+                                return "{$status}: {$activeTrip->vehicle->display_name} ({$activeTrip->scheduled_start->format('M j, H:i')} - {$activeTrip->scheduled_end->format('H:i')})";
+                            })
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(1),
             ]);
     }
 }
